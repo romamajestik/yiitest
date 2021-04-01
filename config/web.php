@@ -1,7 +1,14 @@
 <?php
 
-$params = require __DIR__ . '/params.php';
-$db = require __DIR__ . '/db.php';
+$params = \yii\helpers\ArrayHelper::merge(
+    require __DIR__ . '/params.php',
+    require __DIR__ . '/params-local.php'
+);
+
+$db = \yii\helpers\ArrayHelper::merge(
+    require __DIR__ . '/db.php',
+    require __DIR__ . '/db-local.php'
+);
 
 $config = [
     'id' => 'basic',
@@ -16,12 +23,15 @@ $config = [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'bwieoRW38TcM7k-3auqDB1eEzXF7ydQj',
         ],
+        'authManager' => [
+            'class' => 'yii\rbac\DbManager',
+        ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
         'user' => [
-            'identityClass' => 'app\models\User',
-            'enableAutoLogin' => true,
+            'identityClass' => 'app\models\User1',
+            'enableAutoLogin' => false,
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
@@ -43,14 +53,20 @@ $config = [
             ],
         ],
         'db' => $db,
-        /*
+        'formatter' => [
+            'dateFormat' => 'dd.MM.yyyy',
+            'decimalSeparator' => ',',
+            'thousandSeparator' => ' ',
+        ],
+
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                '<path:.+?>/<id:\d+>' => '<path>',
             ],
         ],
-        */
+
     ],
     'params' => $params,
 ];
