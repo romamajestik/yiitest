@@ -1,3 +1,14 @@
+<h3>Инструкция<h3>
+<ol>
+<li>создать бд, прописать конфиг в db-local</li>
+<li>применить миграции, также с параметром --migrationPath=@yii/rbac/migrations</li>
+<li>./yii rbac/create-user admin</li>
+<li>./yii rbac 1 admin</li>
+<li>./yii rbac/create-user user</li>
+<li>./yii rbac 2 user</li>
+</ol>
+
+<br/>
 <p align="center">
     <a href="https://github.com/yiisoft" target="_blank">
         <img src="https://avatars0.githubusercontent.com/u/993323" height="100px">
