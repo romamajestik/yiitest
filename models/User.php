@@ -17,7 +17,7 @@ use yii\helpers\ArrayHelper;
  * @property int $status
  * @property string|null $created_at
  *
- * @property Object[] $objects
+ * @property Entity[] $objects
  * @property Task[] $tasks
  */
 class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
@@ -226,7 +226,7 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
      */
     public function getObjects()
     {
-        return $this->hasMany(Object::class, ['user_id' => 'id']);
+        return $this->hasMany(Entity::class, ['user_id' => 'id']);
     }
 
     /**

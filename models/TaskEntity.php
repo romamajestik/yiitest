@@ -11,10 +11,10 @@ use Yii;
  * @property int $object_id
  * @property string|null $created_at
  *
- * @property Object $object
+ * @property Entity $entity
  * @property Task $task
  */
-class TaskObject extends \yii\db\ActiveRecord
+class TaskEntity extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -33,7 +33,7 @@ class TaskObject extends \yii\db\ActiveRecord
             [['task_id', 'object_id'], 'required'],
             [['task_id', 'object_id'], 'integer'],
             [['created_at'], 'safe'],
-            [['object_id'], 'exist', 'skipOnError' => true, 'targetClass' => Object::className(), 'targetAttribute' => ['object_id' => 'id']],
+            [['object_id'], 'exist', 'skipOnError' => true, 'targetClass' => Entity::className(), 'targetAttribute' => ['object_id' => 'id']],
             [['task_id'], 'exist', 'skipOnError' => true, 'targetClass' => Task::className(), 'targetAttribute' => ['task_id' => 'id']],
         ];
     }
@@ -55,9 +55,9 @@ class TaskObject extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getObject()
+    public function getEntity()
     {
-        return $this->hasOne(Object::className(), ['id' => 'object_id']);
+        return $this->hasOne(Entity::className(), ['id' => 'object_id']);
     }
 
     /**

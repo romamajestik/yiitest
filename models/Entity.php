@@ -2,6 +2,7 @@
 namespace app\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "object".
@@ -13,11 +14,13 @@ use Yii;
  * @property string|null $created_at
  *
  * @property User $user
- * @property TaskObject[] $taskObjects
+ * @property TaskEntity[] $taskEntities
  * @property Task[] $tasks
  */
-class Object extends \yii\db\ActiveRecord
+class Entity extends \yii\db\ActiveRecord
 {
+    public $tasks_arr;
+
     /**
      * {@inheritdoc}
      */
@@ -34,7 +37,7 @@ class Object extends \yii\db\ActiveRecord
         return [
             [['name', 'user_id'], 'required'],
             [['user_id'], 'integer'],
-            [['created_at'], 'safe'],
+            [['created_at', 'tasks_arr'], 'safe'],
             [['name', 'file'], 'string', 'max' => 255],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
         ];
@@ -51,7 +54,16 @@ class Object extends \yii\db\ActiveRecord
             'file' => 'File',
             'user_id' => 'User ID',
             'created_at' => 'Created At',
+            'tasks_arr' => 'Tasks',
         ];
+    }
+
+    /**
+     * @return array
+     */
+    public static function getList()
+    {
+        return ArrayHelper::map(self::find()->all(), 'id', 'name');
     }
 
     /**
@@ -69,9 +81,9 @@ class Object extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getTaskObjects()
+    public function getTaskEntities()
     {
-        return $this->hasMany(TaskObject::class, ['object_id' => 'id']);
+        return $this->hasMany(TaskEntity::class, ['object_id' => 'id']);
     }
 
     /**
@@ -79,6 +91,23 @@ class Object extends \yii\db\ActiveRecord
      */
     public function getTasks()
     {
-        return $this->hasMany(Task::class, ['id' => 'task_id'])->via('taskObjects');
+        return $this->hasMany(Task::class, ['id' => 'task_id'])->via('taskEntities');
+    }
+
+    /**
+     * @param bool $insert
+     * @param array $changedAttributes
+     */
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+
+        $this->unlinkAll('tasks', true);
+        if ($this->tasks_arr) {
+            foreach ($this->tasks_arr as $item) {
+                if ($task = Task::findOne($item))
+                    $this->link('tasks', $task);
+            }
+        }
     }
 }
